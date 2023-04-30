@@ -1,21 +1,26 @@
+use mongodb::{Client, options::{ClientOptions, ResolverConfig}};
+use std::env;
+use std::error::Error;
+use tokio;
 
-use mongodb::{Client, options::ClientOptions};
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
+   // Load the MongoDB connection string from an environment variable:
+   let client_uri =
+      env::var("MONGODB_URI").expect("You must set the MONGODB_URI environment var!");
 
-// Parse a connection string into an options struct.
-let mut client_options = ClientOptions::parse("mongodb://localhost:27017").await?;
+   // A Client is needed to connect to MongoDB:
+   // An extra line of code to work around a DNS issue on Windows:
+   let options =
+      ClientOptions::parse_with_resolver_config(&client_uri, ResolverConfig::cloudflare())
+         .await?;
+   let client = Client::with_options(options)?;
 
-// Manually set an option.
-client_options.app_name = Some("My App".to_string());
+   // Print the databases in our MongoDB cluster:
+   println!("Databases:");
+   for name in client.list_database_names(None, None).await? {
+      println!("- {}", name);
+   }
 
-// Get a handle to the deployment.
-let client = Client::with_options(client_options)?;
-
-// List the names of the databases in that deployment.
-for db_name in client.list_database_names(None, None).await? {
-    println!("{}", db_name);
-}
-
-
-fn main() {
-    println!("Hello, world!");
+   Ok(())
 }
