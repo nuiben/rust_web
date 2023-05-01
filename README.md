@@ -8,4 +8,4 @@ No venture into web development is complete without launching your first API. Th
 
 The API downloads the mongodb crate to the Rustup toolkit for the purpose of establishing a connection to the database and utilizes the [tokio crate](https://docs.rs/tokio/latest/tokio/) to support asynchronous tasks. The list of dependencies is large and far surpasses the scope of this initial project.
 
-TODO: The proof of concept sample.txt list still needs to be entered into the database.
+TODO: Now that the database is populated, we need to functionize our CRUD methods and add more fields to the existing entries.
